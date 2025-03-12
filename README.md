@@ -1,7 +1,3 @@
-Here’s a cleaner, more structured, and professional-looking **README.md** for your project:
-
----
-
 # **CMake_iOSmacOS_MetalTemplate**
 *A Minimalist Metal App with CMake (C++/Objective-C) and Dynamic Library Linking with Automatic CodeSigning*
 
@@ -9,11 +5,13 @@ Here’s a cleaner, more structured, and professional-looking **README.md** for 
 This repository provides a streamlined **Metal App Template** for **iOS and macOS**, built with **CMake**. It simplifies the setup and compilation process, allowing you to quickly get started with Metal development.
 
 ### **🚀 Key Features**
+
 ✔ **Supports iOS & macOS** using CMake  
 ✔ **Simplified setup** with minimal configuration  
 ✔ **Works with physical devices** (iPhones, iPads) effortlessly  
 ✔ **Based on** [leetal/ios-cmake](https://github.com/leetal/ios-cmake) but **enhanced** for better usability.  
 ✔ **Automatic Code Signing** 
+
 ---
 
 ## **📦 Installation & Usage**
