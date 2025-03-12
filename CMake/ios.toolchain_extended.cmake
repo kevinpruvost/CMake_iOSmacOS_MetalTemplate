@@ -47,7 +47,7 @@ macro(set_xcode_property TARGET XCODE_PROPERTY XCODE_VALUE XCODE_RELVERSION)
 endmacro()
 
 # Function to get all dependencies of a target
-function(get_all_dependencies_xcode target out_var)
+function(get_all_dependencies_from_xcode_target target out_var)
     get_target_property(deps ${target} LINK_LIBRARIES)
     if (deps)
         foreach(dep ${deps})
@@ -65,3 +65,104 @@ function(get_all_dependencies_xcode target out_var)
         set(${out_var} ${result} PARENT_SCOPE)
     endif()
 endfunction()
+
+macro(include_frameworks target frameworks)
+    set_target_properties(${target} PROPERTIES
+        XCODE_EMBED_FRAMEWORKS "${frameworks}"
+        XCODE_EMBED_FRAMEWORKS_CODE_SIGN_ON_COPY ON
+        XCODE_LINK_BUILD_PHASE_MODE BUILT_ONLY
+    )
+endmacro()
+
+macro(include_p_list target plist_path)
+    set_target_properties(${target} PROPERTIES
+        MACOSX_BUNDLE_INFO_PLIST "${plist_path}"
+    )
+    set(PLIST_FILE ${plist_path})
+endmacro()
+
+macro(include_asset_catalog target asset_catalog_path)
+    message(STATUS "ASSET_CATALOG_PATH=${asset_catalog_path}")
+
+    # Ensure the asset catalog is included in the bundle resources
+    set_source_files_properties(${asset_catalog_path}
+            PROPERTIES
+            MACOSX_PACKAGE_LOCATION "Resources"
+    )
+
+    # Asset catalog app icon set
+    # List everything that is in the asset catalog
+    file(GLOB_RECURSE asset_catalog_files CONFIGURE_DEPENDS "${asset_catalog_path}/*" "${asset_catalog_path}/**/**")
+
+    # Get name of the asset catalog
+    get_filename_component(ASSET_CATALOG_NAME ${asset_catalog_path} NAME)
+    message(STATUS "ASSET_CATALOG_NAME=${ASSET_CATALOG_NAME}")
+    set_source_files_properties(${asset_catalog_files} PROPERTIES
+        MACOSX_PACKAGE_LOCATION "Resources/${ASSET_CATALOG_NAME}"
+    )
+
+    foreach (FILE ${asset_catalog_files})
+        file(RELATIVE_PATH NEW_FILE "${asset_catalog_path}" ${FILE})
+        get_filename_component(NEW_FILE_PATH ${NEW_FILE} DIRECTORY)
+        message(STATUS "Copying asset catalog file: ${FILE} to ${NEW_FILE}")
+        set_source_files_properties(${FILE}
+                PROPERTIES
+                MACOSX_PACKAGE_LOCATION "Resources/${ASSET_CATALOG_NAME}/${NEW_FILE_PATH}"
+                XCODE_FILE_ATTRIBUTES "CodeSignOnCopy"
+        )
+        set(RESOURCES_BUNDLE_FILES ${RESOURCES_BUNDLE_FILES} ${RESOURCES_BUNDLE_LOCATION}/${NEW_FILE} PARENT_SCOPE)
+    endforeach()
+
+    target_sources(${PROJECT_NAME} PRIVATE
+        ${asset_catalog_path}
+    )
+endmacro()
+
+macro(include_storyboards target storyboard_directory)
+    # Search for every storyboard in the dir
+    file(GLOB_RECURSE STORYBOARD_FILES CONFIGURE_DEPENDS "${storyboard_directory}/*.storyboard" "${storyboard_directory}/**/*.storyboard")
+
+    target_sources(${target} PRIVATE
+        ${STORYBOARD_FILES}
+    )
+
+    set_target_properties(${target} PROPERTIES
+        RESOURCE "${STORYBOARD_FILES}"
+    )
+
+    set_source_files_properties(${STORYBOARD_FILES} PROPERTIES
+        XCODE_FILE_TYPE "file.storyboard"
+    )
+
+    foreach (FILE ${STORYBOARD_FILES})
+        file(RELATIVE_PATH NEW_FILE "${storyboard_directory}" ${FILE})
+        get_filename_component(NEW_FILE_PATH ${NEW_FILE} DIRECTORY)
+        message(STATUS "Copying storyboard: ${FILE}")
+        set_source_files_properties(${FILE}
+            PROPERTIES
+            MACOSX_PACKAGE_LOCATION "Resources"
+            XCODE_FILE_ATTRIBUTES "CodeSignOnCopy"
+        )
+    endforeach()
+endmacro()
+
+macro(include_xcode_resource_files target resource_files resource_dir)
+    target_sources(${target} PRIVATE
+            ${resource_files}
+    )
+
+    set_target_properties(${target} PROPERTIES
+            RESOURCE "${resource_files}"
+    )
+
+    foreach (FILE ${resource_files})
+        file(RELATIVE_PATH NEW_FILE "${resource_dir}" ${FILE})
+        get_filename_component(NEW_FILE_PATH ${NEW_FILE} DIRECTORY)
+        message(STATUS "Copying ${FILE} to ${NEW_FILE}")
+        set_source_files_properties(${FILE}
+                PROPERTIES
+                MACOSX_PACKAGE_LOCATION "Resources/${NEW_FILE_PATH}"
+                XCODE_FILE_ATTRIBUTES "CodeSignOnCopy"
+        )
+    endforeach()
+endmacro()
