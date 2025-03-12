@@ -139,31 +139,3 @@ elseif (CMAKE_SYSTEM_NAME MATCHES "Darwin")
 endif ()
 
 include_xcode_resource_files(${PROJECT_NAME} "${RESOURCE_FILES}" "${RESOURCE_DIR}")
-
-#target_sources(${PROJECT_NAME} PRIVATE
-#    ${RESOURCE_FILES}
-#)
-#
-#set_target_properties(${PROJECT_NAME} PROPERTIES
-#    RESOURCE "${RESOURCE_FILES}"
-#)
-#
-#foreach (FILE ${RESOURCE_FILES})
-#    file(RELATIVE_PATH NEW_FILE "${RESOURCE_DIR}" ${FILE})
-#    get_filename_component(NEW_FILE_PATH ${NEW_FILE} DIRECTORY)
-#    message(STATUS "Copying ${FILE} to ${NEW_FILE}")
-#    set_source_files_properties(${FILE}
-#            PROPERTIES
-#            MACOSX_PACKAGE_LOCATION "Resources/${NEW_FILE_PATH}"
-#            XCODE_FILE_ATTRIBUTES "CodeSignOnCopy"
-#    )
-#endforeach()
-
-# Define the path to the asset catalog (if needed later)
-# set(ASSET_CATALOG_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Assets.xcassets")
-#set_source_files_properties(${ASSET_CATALOG_PATH}
-#        PROPERTIES
-#        MACOSX_PACKAGE_LOCATION "Resources"
-#        XCODE_FILE_ATTRIBUTES "CodeSignOnCopy"
-#        HEADER_FILE_ONLY TRUE
-#)
