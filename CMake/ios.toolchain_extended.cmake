@@ -54,7 +54,7 @@ function(get_all_dependencies_from_xcode_target target out_var)
                 endif()
 
                 # Recursively collect dependencies
-                get_all_dependencies(${dep} result)
+                get_all_dependencies_from_xcode_target(${dep} result)
             endif()
         endforeach()
         set(${out_var} ${result} PARENT_SCOPE)
