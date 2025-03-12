@@ -159,24 +159,6 @@ macro(include_xcode_resource_files target resource_files resource_dir)
     endforeach()
 endmacro()
 
-macro(include_xcode_resource_files target resource_files resource_dir)
-    target_sources(${target} PRIVATE
-            ${resource_files}
-    )
-
-    foreach (FILE ${resource_files})
-        file(RELATIVE_PATH NEW_FILE "${resource_dir}" ${FILE})
-        get_filename_component(NEW_FILE_PATH ${NEW_FILE} DIRECTORY)
-        message(STATUS "Copying ${FILE} to ${NEW_FILE_PATH}")
-        set_source_files_properties(${FILE}
-                PROPERTIES
-                MACOSX_PACKAGE_LOCATION "Resources/${NEW_FILE_PATH}"
-                XCODE_FILE_ATTRIBUTES "CodeSignOnCopy"
-                HEADER_FILE_ONLY TRUE
-        )
-    endforeach()
-endmacro()
-
 macro(include_xcode_bundle_resource_files target resource_files resource_dir)
     target_sources(${target} PRIVATE
             ${resource_files}
