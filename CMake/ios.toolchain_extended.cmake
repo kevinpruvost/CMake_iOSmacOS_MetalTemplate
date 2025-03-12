@@ -63,15 +63,15 @@ endfunction()
 
 macro(include_frameworks target frameworks)
     set_target_properties(${target} PROPERTIES
-        XCODE_EMBED_FRAMEWORKS "${frameworks}"
-        XCODE_EMBED_FRAMEWORKS_CODE_SIGN_ON_COPY ON
-        XCODE_LINK_BUILD_PHASE_MODE BUILT_ONLY
+            XCODE_EMBED_FRAMEWORKS "${frameworks}"
+            XCODE_EMBED_FRAMEWORKS_CODE_SIGN_ON_COPY ON
+            XCODE_LINK_BUILD_PHASE_MODE BUILT_ONLY
     )
 endmacro()
 
 macro(include_p_list target plist_path)
     set_target_properties(${target} PROPERTIES
-        MACOSX_BUNDLE_INFO_PLIST "${plist_path}"
+            MACOSX_BUNDLE_INFO_PLIST "${plist_path}"
     )
     set(PLIST_FILE ${plist_path})
 endmacro()
@@ -93,7 +93,7 @@ macro(include_asset_catalog target asset_catalog_path)
     get_filename_component(ASSET_CATALOG_NAME ${asset_catalog_path} NAME)
     message(STATUS "ASSET_CATALOG_NAME=${ASSET_CATALOG_NAME}")
     set_source_files_properties(${asset_catalog_files} PROPERTIES
-        MACOSX_PACKAGE_LOCATION "Resources/${ASSET_CATALOG_NAME}"
+            MACOSX_PACKAGE_LOCATION "Resources/${ASSET_CATALOG_NAME}"
     )
 
     foreach (FILE ${asset_catalog_files})
@@ -109,7 +109,7 @@ macro(include_asset_catalog target asset_catalog_path)
     endforeach()
 
     target_sources(${PROJECT_NAME} PRIVATE
-        ${asset_catalog_path}
+            ${asset_catalog_path}
     )
 endmacro()
 
@@ -118,15 +118,15 @@ macro(include_storyboards target storyboard_directory)
     file(GLOB_RECURSE STORYBOARD_FILES CONFIGURE_DEPENDS "${storyboard_directory}/*.storyboard" "${storyboard_directory}/**/*.storyboard")
 
     target_sources(${target} PRIVATE
-        ${STORYBOARD_FILES}
+            ${STORYBOARD_FILES}
     )
 
     set_target_properties(${target} PROPERTIES
-        RESOURCE "${STORYBOARD_FILES}"
+            RESOURCE "${STORYBOARD_FILES}"
     )
 
     set_source_files_properties(${STORYBOARD_FILES} PROPERTIES
-        XCODE_FILE_TYPE "file.storyboard"
+            XCODE_FILE_TYPE "file.storyboard"
     )
 
     foreach (FILE ${STORYBOARD_FILES})
@@ -134,9 +134,9 @@ macro(include_storyboards target storyboard_directory)
         get_filename_component(NEW_FILE_PATH ${NEW_FILE} DIRECTORY)
         message(STATUS "Copying storyboard: ${FILE}")
         set_source_files_properties(${FILE}
-            PROPERTIES
-            MACOSX_PACKAGE_LOCATION "Resources"
-            XCODE_FILE_ATTRIBUTES "CodeSignOnCopy"
+                PROPERTIES
+                MACOSX_PACKAGE_LOCATION "Resources"
+                XCODE_FILE_ATTRIBUTES "CodeSignOnCopy"
         )
     endforeach()
 endmacro()
@@ -146,18 +146,15 @@ macro(include_xcode_resource_files target resource_files resource_dir)
             ${resource_files}
     )
 
-    set_target_properties(${target} PROPERTIES
-            RESOURCE "${resource_files}"
-    )
-
     foreach (FILE ${resource_files})
         file(RELATIVE_PATH NEW_FILE "${resource_dir}" ${FILE})
         get_filename_component(NEW_FILE_PATH ${NEW_FILE} DIRECTORY)
-        message(STATUS "Copying ${FILE} to ${NEW_FILE}")
+        message(STATUS "Copying ${FILE} to ${NEW_FILE_PATH}")
         set_source_files_properties(${FILE}
                 PROPERTIES
                 MACOSX_PACKAGE_LOCATION "Resources/${NEW_FILE_PATH}"
                 XCODE_FILE_ATTRIBUTES "CodeSignOnCopy"
+                HEADER_FILE_ONLY TRUE
         )
     endforeach()
 endmacro()
