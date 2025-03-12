@@ -138,4 +138,4 @@ elseif (CMAKE_SYSTEM_NAME MATCHES "Darwin")
     include_storyboards(${PROJECT_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/Application/macOS/Base.lproj/")
 endif ()
 
-include_xcode_resource_files(${PROJECT_NAME} "${RESOURCE_FILES}" "${RESOURCE_DIR}")
+include_xcode_bundle_resource_files(${PROJECT_NAME} "${RESOURCE_FILES}" "${RESOURCE_DIR}")
