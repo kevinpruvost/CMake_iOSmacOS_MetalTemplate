@@ -13,7 +13,7 @@ set(CODESIGN_IDENTITY_FILE "${PROJECT_SOURCE_DIR}/CMake/codesign_identity.txt")
 # Configure the code signing identity file from a template only if it does not exist
 if (NOT EXISTS ${CODESIGN_IDENTITY_FILE})
     # If the user has not given the variables CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM and CODE_SIGN_IDENTITY then error
-    if (NOT DEFINED CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM OR CODE_SIGN_IDENTITY STREQUAL "")
+    if (NOT DEFINED CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM)
         message(FATAL_ERROR "CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM & CODE_SIGN_IDENTITY not specified. Please give them as arguments to CMake with 'cmake -DCODE_SIGN_IDENTITY=? -DCMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM=?
             or update Apple/codesign_identity.txt
             It should look like this: CODESIGN_IDENTITY=\"Apple Development: Your Name (TEAM_ID)\"
@@ -25,15 +25,10 @@ endif()
 # Read the contents of the file
 file(READ ${CODESIGN_IDENTITY_FILE} CODESIGN_IDENTITY_CONTENTS)
 
-# Extract CODE_SIGN_IDENTITY
-string(REGEX MATCH "CODE_SIGN_IDENTITY=\"?([^\"]+)\"?" _unused "${CODESIGN_IDENTITY_CONTENTS}")
-set(CODESIGN_IDENTITY "${CMAKE_MATCH_1}")
-
 # Extract CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM
 string(REGEX MATCH "CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM=\"?([^\"]+)\"?" _unused "${CODESIGN_IDENTITY_CONTENTS}")
 set(CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM "${CMAKE_MATCH_1}")
 
-message(STATUS "Code signing identity: [${CODESIGN_IDENTITY}]")
 message(STATUS "Development team: ${CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM}")
 
 # Macro to set XCode properties
