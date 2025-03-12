@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+CMake/codesign_identity.txt
+
+build_*
+cmake-*
+
+.idea
+.DS_Store
